@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserStore } from './store/user-store';
+import { User } from './type/user';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,6 @@ export class App {
     }
     else{
       let formValues = this.userForm.value;
-      console.log(formValues);
       this.userStore.addUser(formValues);
       this.userForm.reset();
     }
@@ -35,5 +35,9 @@ export class App {
 
   clear(){
     this.userForm.reset();
+  }
+
+  deleteUser(user:User){
+    this.userStore.deleteUser(user);
   }
 }

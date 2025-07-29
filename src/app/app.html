@@ -24,6 +24,7 @@
         <tr>
           <th>Name</th>
           <th>Description</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -31,6 +32,9 @@
           <tr>
             <td>{{user.name}}</td>
             <td>{{user.description}}</td>
+            <td>
+              <button class="btn btn-danger" (click)="deleteUser(user)">Delete</button>
+            </td>
           </tr>
         }
       </tbody>
