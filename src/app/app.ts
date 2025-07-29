@@ -1,11 +1,39 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UserStore } from './store/user-store';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
+
+  formBuilder = inject(FormBuilder)
+  userForm!: FormGroup;
+  userStore: UserStore;
+  constructor(){
+    this.userForm = this.formBuilder.group({
+      name: ['',Validators.required],
+      description: ['',Validators.required],
+    });
+    this.userStore = new UserStore();
+  }
+
+  save(){
+    if (this.userForm.invalid){
+      return;
+    }
+    else{
+      let formValues = this.userForm.value;
+      console.log(formValues);
+      this.userStore.addUser(formValues);
+      this.userForm.reset();
+    }
+  }
+
+  clear(){
+    this.userForm.reset();
+  }
 }
