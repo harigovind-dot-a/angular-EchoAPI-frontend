@@ -1,0 +1,20 @@
+<div class="container mt-4">
+    <div class="shadow-sm rounded bg-white p-4 mb-4">
+        <form [formGroup]="echoform" (ngSubmit)="save()">
+            <div class="mb-3">
+                <label class="form-label" for="description">Description</label>
+                <input formControlName="description" type="text" class="form-control" placeholder="Write something..." />
+            </div>
+            <button type="submit" class="btn btn-primary me-2">Add</button>
+            <button type="button" class="btn btn-secondary" (click)="clear()">Clear</button>
+        </form>
+    </div>
+    <div class="shadow-sm bg-white p-3 rounded">
+        <h5>Recent Messages</h5>
+        <ul class="list-group">
+            @for (msg of tempecho(); track $index) {
+                <li class="list-group-item">{{ msg }}</li>
+            }
+        </ul>
+    </div>
+</div>

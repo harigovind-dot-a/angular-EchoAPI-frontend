@@ -1,8 +1,13 @@
-import { effect, signal } from "@angular/core";
-import { User } from "../type/user";
+import { effect, Injectable, signal } from "@angular/core";
 
-export class UserStore{
-    users = signal<User[]>(this.loadFromStorage());
+export interface Message {
+  id: string;
+  description: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class EchoMessageStore{
+    users = signal<Message[]>(this.loadFromStorage());
 
     constructor() {
         effect( ()=> {
@@ -10,19 +15,19 @@ export class UserStore{
         });
     }
 
-    addUser(user: User){
+    addMessage(user: Message){
         user.id = crypto.randomUUID();
         this.users.update((users)=> {
             return [...users, user];
         });
     }
-    deleteUser(user: User){
+    deleteMessage(user: Message){
         this.users.update((users) => {
             return users.filter( u=> u.id != user.id);
         })
     }
 
-    private loadFromStorage(): User[] {
+    private loadFromStorage(): Message[] {
         const data = localStorage.getItem('users');
         return data ? JSON.parse(data) : [];
     }

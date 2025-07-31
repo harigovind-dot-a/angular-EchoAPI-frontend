@@ -1,43 +1,52 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserStore } from './store/user-store';
-import { User } from './type/user';
+import { CommonModule } from '@angular/common';
+import { Component, HostListener } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [ReactiveFormsModule],
+  standalone: true,
+  imports: [RouterOutlet, CommonModule, RouterLink],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
+  isSidebarVisible = false;
+  screenWidth = window.innerWidth;
 
-  formBuilder = inject(FormBuilder)
-  userForm!: FormGroup;
-  userStore: UserStore;
-  constructor(){
-    this.userForm = this.formBuilder.group({
-      name: ['',Validators.required],
-      description: ['',Validators.required],
-    });
-    this.userStore = new UserStore();
+  onHamburgerClick(event: MouseEvent) {
+    event.stopPropagation();
+    this.toggleSidebar();
   }
 
-  save(){
-    if (this.userForm.invalid){
-      return;
-    }
-    else{
-      let formValues = this.userForm.value;
-      this.userStore.addUser(formValues);
-      this.userForm.reset();
+  toggleSidebar() {
+    this.isSidebarVisible = !this.isSidebarVisible;
+  }
+
+  closeSidebar() {
+    if (this.isMobileView()) {
+      this.isSidebarVisible = false;
     }
   }
 
-  clear(){
-    this.userForm.reset();
+  closeSidebarIfMobile(): void {
+     if (this.isMobileView()){
+      this.isSidebarVisible = false;
+     }
   }
 
-  deleteUser(user:User){
-    this.userStore.deleteUser(user);
+  isMobileView(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.screenWidth = event.target.innerWidth;
+    if (!this.isMobileView()) {
+      this.isSidebarVisible = true;
+    }
+  }
+
+  constructor() {
+    this.isSidebarVisible = !this.isMobileView();
   }
 }
