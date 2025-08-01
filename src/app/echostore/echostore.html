@@ -8,9 +8,9 @@
             </tr>
         </thead>
         <tbody>
-            @for (user of echomessagestore.users(); track $index){
+            @for (user of users; track $index){
                 <tr>
-                    <td>{{ user.description }}</td>
+                    <td>{{ user.content }}</td>
                     <td>
                         <button class="btn btn-danger btn-sm" (click)="deleteMessage(user)">Delete</button>
                     </td>

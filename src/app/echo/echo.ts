@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, signal } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
-import { EchoMessageStore } from "./echo-message-store";
+import { Component, OnInit, signal } from "@angular/core";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
     standalone: true,
@@ -11,24 +11,28 @@ import { EchoMessageStore } from "./echo-message-store";
 })
 
 export class Echo{
-    echoform;
+    echoform: FormGroup;
+    messages = signal<string[]>([]);
+    readonly API_URL = 'http://127.0.0.1:8000/echo/';
 
-    tempecho  = signal<string[]>([]);
-    constructor(private formbuilder: FormBuilder, public echomessagestore: EchoMessageStore){
-        this.echoform = this.formbuilder.nonNullable.group({
-            description: ''
+    constructor(private fb: FormBuilder, private http: HttpClient) {
+        this.echoform = this.fb.group({
+            description: ['', Validators.required]
         });
     }
-
-    save(){
-        const desc = this.echoform.value.description;
-        if (desc){
-            this.echomessagestore.addMessage({id: '', description: desc });
-            this.tempecho.update((msgs)=>[...msgs, desc]);
-            this.echoform.reset();
+    save(): void {
+        if (this.echoform.valid) {
+            const content = this.echoform.value.description;
+            this.http.post(this.API_URL, { content }).subscribe(() => {
+                this.echoform.reset();
+                this.messages.update(msgs => [...msgs, content]);
+            });
         }
     }
-    clear(){
+    clear(): void {
         this.echoform.reset();
+    }
+    tempecho(): string[] {
+        return this.messages();
     }
 }
